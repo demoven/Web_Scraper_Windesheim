@@ -70,7 +70,7 @@ const main = async () => {
 
     console.log(allData);
     await browser.close();
-    fs.writeFileSync(websiteNameWithoutWWW + "_case_studies.json", JSON.stringify(allData, null, 2));
+    fs.writeFileSync("Results/"+websiteNameWithoutWWW + "_case_studies.json", JSON.stringify(allData, null, 2));
 }
 
 main();
