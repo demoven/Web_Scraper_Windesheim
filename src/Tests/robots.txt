@@ -1,0 +1,51 @@
+User-agent: *
+Disallow: /*.axd
+Disallow: /sitecore modules/
+Disallow: /modules/
+Disallow: /sitecore/
+Disallow: /layouts/
+Disallow: /Sublayouts/
+Disallow: /sitecore_files/
+Disallow: /upload/
+Disallow: /NotFound.aspx
+Disallow: /InternalError.html
+# undefined
+Disallow: /*undefined$
+# jsdebug
+Disallow: /services/forms/formapi.asmx/jsdebug
+Disallow: /services/forms/formapi.asmx/js
+Disallow: /error
+Disallow: /ClientLink/
+Disallow: /clientlink/
+Disallow: /AppData
+Disallow: /McKinsey/
+Disallow: /content/
+Disallow: /tools/Wrappers
+Disallow: /user_registration/
+Disallow: /user-registration
+Disallow: /search
+# Miscellaneous exclusions
+Disallow: /RSS/
+Disallow: /insights/rss.aspx
+Disallow: /nocookie
+Disallow: /noaccess
+Disallow: /html/
+Disallow: /assets/dotcom/staging/
+Disallow: /gsa/
+Disallow: /practice-clients/
+Disallow: /Practice-Clients/
+Disallow: /alumniappload/
+Disallow: /AlumniAppLoad/
+Disallow: /alumniappload
+Disallow: /AlumniAppLoad
+
+
+User-agent: gsa-crawler
+Allow: /clientlink/
+Allow: /gsa/
+Allow: /practice-clients/
+
+Sitemap: https://www.mckinsey.com/sitemap.xml
+
+User-agent: amazon-kendra # Amazon Kendra Web Crawler
+Disallow: / # disallow access to any pages

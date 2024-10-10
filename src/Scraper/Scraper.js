@@ -4,14 +4,25 @@ import fs from 'fs';
 import path from 'path';
 
 class Scraper {
-    constructor(baseURL, useCaseClass, useCaseTitleClass, useCaseContentClass, linkElementClass, numberOfPages) {
-        this.baseURL = baseURL;
-        this.useCaseClass = useCaseClass;
-        this.useCaseTitleClass = useCaseTitleClass;
-        this.useCaseContentClass = useCaseContentClass;
-        this.linkElementClass = linkElementClass;
-        this.numberOfPages = numberOfPages;
-        this.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36';
+    // Propriétés privées
+    #baseURL;
+    #useCaseClass;
+    #useCaseTitleClass;
+    #useCaseContentClass;
+    #linkElementClass;
+    #numberOfPages;
+    #titleData;
+    #userAgent;
+
+    constructor(baseURL, useCaseClass, useCaseTitleClass, useCaseContentClass, linkElementClass, numberOfPages, titleData) {
+        this.#baseURL = baseURL;
+        this.#useCaseClass = useCaseClass;
+        this.#useCaseTitleClass = useCaseTitleClass;
+        this.#useCaseContentClass = useCaseContentClass;
+        this.#linkElementClass = linkElementClass;
+        this.#numberOfPages = numberOfPages;
+        this.#titleData = titleData;
+        this.#userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36';
     }
 
     async scrape() {
@@ -20,19 +31,19 @@ class Scraper {
             args: ['--lang=en-US']
         });
         const page = await browser.newPage();
-        await page.setUserAgent(this.userAgent);
+        await page.setUserAgent(this.#userAgent);
 
         let allData = [];
-        for (let i = 1; i <= this.numberOfPages; i++) {
-            let url = `${this.baseURL}${i}`;
+        for (let i = 1; i <= this.#numberOfPages; i++) {
+            let url = `${this.#baseURL}${i}`;
             if (i === 1) {
-                url = this.baseURL;
+                url = this.#baseURL;
             }
             console.log(`Navigating to page: ${url}`);
             await page.goto(url, { waitUntil: 'networkidle2' });
 
             console.log('Waiting for selector...');
-            await page.waitForSelector(this.useCaseClass, { visible: true, timeout: 60000 });
+            await page.waitForSelector(this.#useCaseClass, { visible: true, timeout: 60000 });
             console.log('Selector found!');
 
             const data = await page.evaluate((useCaseClass, useCaseTitleClass, useCaseContentClass, linkElementClass) => {
@@ -49,21 +60,32 @@ class Scraper {
                         href: linkElement ? linkElement.href : null
                     };
                 });
-            }, this.useCaseClass, this.useCaseTitleClass, this.useCaseContentClass, this.linkElementClass);
+            }, this.#useCaseClass, this.#useCaseTitleClass, this.#useCaseContentClass, this.#linkElementClass);
 
             allData = allData.concat(data);
             console.log(`Page ${i} extracted`);
         }
 
         await browser.close();
-        this.saveData(allData);
-        console.log(allData);
+        this.saveData(this.addOnlyNewElement(this.#titleData, allData));
     }
 
+    addOnlyNewElement(title, data) {
+        let sortData = [];
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].title === title) {
+                break;
+            }
+            sortData.push(data[i]);
+        }
+        console.log("sortData: ", sortData);
+        return sortData;
+    }
+    
     saveData(data) {
-        const url = new URL(this.baseURL);
+        const url = new URL(this.#baseURL);
         const websiteName = url.hostname.replace('www.', '').replace('.com', '');
-        const filePath = '../../Results/'+websiteName+'_case_studies.json';
+        const filePath = `../../Results/${websiteName}_case_studies.json`;
 
         fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
         console.log(`Data saved to ${filePath}`);
