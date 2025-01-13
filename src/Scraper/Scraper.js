@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 class Scraper {
-    // Propriétés privées
+    // Private fields
     #baseURL;
     #useCaseClass;
     #useCaseTitleClass;
@@ -46,6 +46,7 @@ class Scraper {
             await page.waitForSelector(this.#useCaseClass, { visible: true, timeout: 60000 });
             console.log('Selector found!');
 
+            // Extract data
             const data = await page.evaluate((useCaseClass, useCaseTitleClass, useCaseContentClass, linkElementClass) => {
                 const cards = document.querySelectorAll(useCaseClass);
 
@@ -70,6 +71,8 @@ class Scraper {
         this.saveData(this.addOnlyNewElement(this.#titleData, allData));
     }
 
+    // Add only new element to the data, no duplicates
+
     addOnlyNewElement(title, data) {
         let sortData = [];
         for (let i = 0; i < data.length; i++) {
@@ -81,6 +84,8 @@ class Scraper {
         console.log("sortData: ", sortData);
         return sortData;
     }
+
+    // Save data to a JSON file
     
     saveData(data) {
         const url = new URL(this.#baseURL);

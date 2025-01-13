@@ -21,14 +21,14 @@ const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 
 const main = async () => {
     const robotsChecker = new RobotsChecker(robotsTxtUrl, userAgent);
     
-    // Vérifie si le scraping est autorisé pour l'URL de base
+    // Check if scraping is allowed
     const isAllowed = await robotsChecker.isAllowed(request.url);
     if (!isAllowed) {
         console.log(`Scraping not allowed for ${request.url}`);
         return;
     }
 
-    // Si le scraping est autorisé, on lance le scraper
+    // If scraping is allowed, start scraping
     const scraper = new Scraper(request.url, request.useCaseClass, request.useCaseTitleClass, request.useCaseContentClass, request.linkElementClass, request.numberOfPages, request.titleData);
     await scraper.scrape();
 };
